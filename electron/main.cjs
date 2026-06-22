@@ -18,7 +18,7 @@ function createWindow() {
     minWidth: 980,
     minHeight: 680,
     backgroundColor: '#f5f8fb',
-    title: 'AI 热点雷达',
+    title: 'Agent Skills 自动化工作台',
     icon: iconPath,
     webPreferences: {
       preload: path.join(__dirname, 'preload.cjs'),
@@ -51,10 +51,10 @@ function readLocalEnv() {
 
 function runReport() {
   if (running) {
-    return Promise.resolve({ ok: false, message: '报告正在刷新中' });
+    return Promise.resolve({ ok: false, message: '任务正在运行中' });
   }
   running = true;
-  mainWindow?.webContents.send('report-status', { running: true, message: '正在抓取并生成报告...' });
+  mainWindow?.webContents.send('report-status', { running: true, message: '正在抓取来源并生成运行结果...' });
 
   return new Promise((resolve) => {
     const child = spawn('python', ['scripts/run_pipeline.py'], {
@@ -74,7 +74,7 @@ function runReport() {
     child.on('close', (code) => {
       running = false;
       const ok = code === 0;
-      const message = ok ? stdout.trim() || '报告已刷新' : stderr.trim() || `刷新失败，退出码 ${code}`;
+      const message = ok ? stdout.trim() || '运行结果已刷新' : stderr.trim() || `运行失败，退出码 ${code}`;
       mainWindow?.webContents.send('report-status', { running: false, ok, message });
       resolve({ ok, message });
     });
@@ -112,4 +112,3 @@ app.on('window-all-closed', () => {
 app.on('activate', () => {
   if (BrowserWindow.getAllWindows().length === 0) createWindow();
 });
-

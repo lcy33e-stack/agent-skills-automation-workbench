@@ -1,11 +1,17 @@
-# AI 热点雷达
+# Agent Skills 自动化工作台
 
-这是一个把“n8n 热点捕捉器”的思路改造成桌面 App + GitHub Actions 自动报告的项目。
+这个项目不是单一的“AI 热点检索工具”。它的目标是复刻那条评论里的核心效果：
 
-它现在有两种使用方式：
+通过 GitHub Actions 在云端定时运行一组 Agent Skills，自动抓取、分析、归档任意任务结果，再生成 HTML 报告并部署到 GitHub Pages；本地则提供一个桌面 App 直接查看和手动运行。
 
-- 本地桌面 App：双击桌面快捷方式，直接在 App 里查看和刷新报告，不需要浏览器端口。
-- GitHub Pages：推到 GitHub 后，由 Actions 定时运行并发布成网页。
+你可以把它配置成：
+
+- 全网热点/选题日报
+- GitHub 项目监控
+- 竞品动态追踪
+- 论文/RSS 摘要
+- 产品灵感收集
+- 投资、行业、内容、工具等任意主题观察
 
 ## 本地桌面 App
 
@@ -16,20 +22,35 @@ python -m pip install -r requirements.txt
 npm install
 ```
 
-然后启动：
+启动：
 
 ```bash
 npm run app
 ```
 
-或者双击桌面的 `AI热点雷达 App` 快捷方式。
+或者双击桌面的 `Agent Skills自动化工作台` / `AI热点雷达 App` 快捷方式。
+
+## 配置任务
+
+主要编辑：
+
+```text
+config/sources.yml
+```
+
+你可以修改：
+
+- `workflow_name`：当前自动化任务名
+- `workflow_goal`：这组 Skills 要完成的目标
+- `keywords`：评分和分析关注的关键词
+- `sources`：RSS、GitHub Search、X API 等来源
 
 ## AI 分析引擎
 
 默认优先使用 OpenAI：
 
-- `OPENAI_API_KEY`：已写入 `.env.local`。
-- `OPENAI_MODEL`：默认 `gpt-5.5`，可在 `.env.local` 或 `config/sources.yml` 修改。
+- `OPENAI_API_KEY`：保存于 `.env.local`
+- `OPENAI_MODEL`：默认 `gpt-5.5`
 
 如果 OpenAI API 项目没有额度或 billing 未开通，程序会自动回退到本地规则摘要，报告仍然可以生成。
 
@@ -38,37 +59,26 @@ npm run app
 - `ANTHROPIC_API_KEY`
 - `ANTHROPIC_MODEL`
 
-## 本地刷新报告
+## 输出
 
-```bash
-python scripts/run_pipeline.py
-```
-
-输出文件：
-
-- `public/index.html`：最新报告。
-- `public/data/latest.json`：结构化数据。
-- `public/archive/*.html`：历史归档。
+- `public/index.html`：最新运行结果
+- `public/data/latest.json`：结构化数据
+- `public/archive/*.html`：历史归档
 
 ## GitHub 上线
 
-1. 登录 GitHub CLI：`gh auth login`
-2. 创建仓库并推送项目。
-3. 在仓库 Actions Secrets 添加：
-   - `OPENAI_API_KEY`
-   - `TWITTERAPI_KEY`，可选，只有启用 X 搜索时需要。
-4. 在仓库 Pages 设置里选择 `GitHub Actions`。
-5. 手动运行一次 `AI Hotspot Radar Report` workflow。
+本机目前还没有登录 GitHub CLI。登录后可以继续：
 
-之后它会每 6 小时自动运行并更新 GitHub Pages。
+```bash
+gh auth login
+```
 
-## 配置来源
+然后创建仓库、推送项目，并在仓库 Actions Secrets 添加：
 
-编辑 `config/sources.yml`：
+- `OPENAI_API_KEY`
+- `TWITTERAPI_KEY`，可选，只有启用 X 搜索时需要
 
-- RSS：YouTube 频道、博客、媒体站、FeedSpot 找到的订阅源。
-- GitHub Search：监控开源项目。
-- twitterapi_search：对应 X 热点 API，需要 `TWITTERAPI_KEY`。
+Pages 设置里选择 `GitHub Actions`，之后 workflow 会每 6 小时自动运行一次。
 
 ## 和 n8n 思路的对应
 
@@ -80,4 +90,3 @@ python scripts/run_pipeline.py
 | AI 节点 | OpenAI / Anthropic / 本地规则 |
 | 存档 | `public/data` 和 `public/archive` |
 | 展示 | Electron 桌面 App + GitHub Pages |
-

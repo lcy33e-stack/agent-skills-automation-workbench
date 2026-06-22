@@ -1,71 +1,87 @@
 settings:
-  report_title: "AI 热点雷达"
-  report_subtitle: "GitHub Actions 定时抓取，Claude Agent Skill 自动归纳，GitHub Pages 网页化展示"
+  report_title: "Agent Skills 自动化工作台"
+  report_subtitle: "GitHub Actions 云端定时运行 Skills，本地 App 和 GitHub Pages 查看结果"
+  workflow_name: "全网信息雷达"
+  workflow_goal: "抓取你配置的任意主题信息，自动筛选、归纳、生成可网页化查看的运行结果。"
   timezone: "Asia/Shanghai"
-  freshness_hours: 96
+  freshness_hours: 120
   max_items_per_source: 16
-  max_total_items: 80
-  top_items: 30
+  max_total_items: 100
+  top_items: 36
   provider: "openai"
   openai_model: "gpt-5.5"
   anthropic_model: "claude-sonnet-4-6"
   keywords:
     - AI
-    - Claude
     - Agent
-    - Agents
-    - OpenAI
-    - Anthropic
+    - 自动化
     - GitHub Actions
     - n8n
-    - MCP
-    - RSS
-    - automation
-    - LLM
-    - Cursor
+    - Claude
+    - OpenAI
+    - 产品
+    - 创业
+    - 工具
+    - 开源
     - workflow
+    - automation
+    - productivity
 
 sources:
-  - id: hn-ai
-    name: "Hacker News / AI"
+  - id: hn-frontpage
+    name: "Hacker News Front Page"
     type: rss
     enabled: true
-    url: "https://hnrss.org/newest?q=AI"
+    url: "https://hnrss.org/frontpage"
+    weight: 1.05
+
+  - id: hn-automation
+    name: "Hacker News / Automation"
+    type: rss
+    enabled: true
+    url: "https://hnrss.org/newest?q=automation"
     weight: 1.1
 
-  - id: hn-claude
-    name: "Hacker News / Claude"
-    type: rss
-    enabled: true
-    url: "https://hnrss.org/newest?q=Claude"
-    weight: 1.15
-
-  - id: github-blog-ai
-    name: "GitHub Blog / AI"
-    type: rss
-    enabled: true
-    url: "https://github.blog/ai-and-ml/feed/"
-    weight: 1.0
-
-  - id: github-ai-repos
-    name: "GitHub AI Repos"
+  - id: github-trending-tools
+    name: "GitHub / Recently Updated Tools"
     type: github_search
     enabled: true
-    url: "https://api.github.com/search/repositories?q=topic:artificial-intelligence+stars:%3E1000&sort=updated&order=desc&per_page=20"
+    url: "https://api.github.com/search/repositories?q=topic:productivity+stars:%3E500&sort=updated&order=desc&per_page=20"
+    weight: 1.15
+
+  - id: github-actions-tools
+    name: "GitHub / Actions Automation"
+    type: github_search
+    enabled: true
+    url: "https://api.github.com/search/repositories?q=%22GitHub+Actions%22+automation+stars:%3E100&sort=updated&order=desc&per_page=20"
     weight: 1.2
+
+  - id: github-blog
+    name: "GitHub Blog"
+    type: rss
+    enabled: true
+    url: "https://github.blog/feed/"
+    weight: 1.0
+
+  - id: product-hunt
+    name: "Product Hunt"
+    type: rss
+    enabled: true
+    url: "https://www.producthunt.com/feed"
+    weight: 1.0
 
   - id: youtube-ai-explained
     name: "YouTube / AI Explained"
     type: rss
-    enabled: true
+    enabled: false
     url: "https://www.youtube.com/feeds/videos.xml?channel_id=UCNJ1Ymd5yFuUPtn21xtRbbw"
     weight: 1.0
 
-  - id: x-ai-search
-    name: "X / AI Search"
+  - id: x-topic-search
+    name: "X / Topic Search"
     type: twitterapi_search
     enabled: false
     url: "https://api.twitterapi.io/twitter/tweet/advanced_search"
-    query: "(AI OR Claude OR agent OR OpenAI OR Anthropic) lang:en min_faves:50"
+    query: "(automation OR agent OR startup OR product OR AI) lang:en min_faves:50"
     api_key_env: "TWITTERAPI_KEY"
     weight: 1.35

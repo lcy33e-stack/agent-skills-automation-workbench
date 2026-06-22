@@ -35,7 +35,7 @@ window.hotspotApp.onReportStatus((payload) => {
 
 refreshButton.addEventListener('click', async () => {
   refreshButton.disabled = true;
-  runStatus.textContent = '正在刷新报告...';
+  runStatus.textContent = '正在运行任务...';
   await window.hotspotApp.runReport();
 });
 
@@ -44,4 +44,3 @@ externalButton.addEventListener('click', () => window.hotspotApp.openReportExter
 folderButton.addEventListener('click', () => window.hotspotApp.openFolder());
 
 loadReportInfo();
-

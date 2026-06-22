@@ -332,7 +332,8 @@ def compact_error(exc: Exception) -> str:
     return message[:220]
 
 
-def build_analysis_prompt(items: list[Item]) -> str:
+def build_analysis_prompt(items: list[Item], config: dict[str, Any]) -> str:
+    settings = config.get("settings", {})
     compact_items = [
         {
             "id": item.id,
@@ -348,8 +349,11 @@ def build_analysis_prompt(items: list[Item]) -> str:
         for item in items[:40]
     ]
     return (
-        "请分析这些热点候选，输出符合 Skill 要求的 JSON。"
-        "重点关注 AI Agent、自动化、模型、开发工具、内容生产和商业机会。\n\n"
+        "请分析这些候选信息，输出符合 Skill 要求的 JSON。"
+        f"工作流名称：{settings.get('workflow_name', settings.get('report_title', '自动化工作流'))}\n"
+        f"工作流目标：{settings.get('workflow_goal', '从来源中提炼有价值的信息和行动建议')}\n"
+        f"关注关键词：{', '.join(settings.get('keywords', []))}\n"
+        "不要把任务默认理解为 AI 热点检索；请围绕工作流目标判断价值。\n\n"
         f"{json.dumps(compact_items, ensure_ascii=False)}"
     )
 
@@ -366,7 +370,7 @@ def analyze_with_openai(items: list[Item], config: dict[str, Any]) -> tuple[dict
 
     model = os.getenv("OPENAI_MODEL") or config["settings"].get("openai_model", "gpt-5.5")
     skill = SKILL_PATH.read_text(encoding="utf-8")
-    prompt = build_analysis_prompt(items)
+    prompt = build_analysis_prompt(items, config)
 
     try:
         client = OpenAI(api_key=api_key)
@@ -397,7 +401,7 @@ def analyze_with_claude(items: list[Item], config: dict[str, Any]) -> tuple[dict
 
     model = os.getenv("ANTHROPIC_MODEL") or config["settings"].get("anthropic_model", "claude-sonnet-4-6")
     skill = SKILL_PATH.read_text(encoding="utf-8")
-    prompt = build_analysis_prompt(items)
+    prompt = build_analysis_prompt(items, config)
 
     try:
         client = Anthropic(api_key=api_key)
@@ -448,7 +452,7 @@ def fallback_analysis(items: list[Item], config: dict[str, Any]) -> dict[str, An
             "signal": "上升" if count >= 3 else "观察",
             "why": f"本轮采集中出现 {count} 次，值得继续跟踪。",
             "evidence": [item.id for item in items if keyword in (item.keywords or [])][:3],
-            "action": "查看来源原文，判断是否适合沉淀成选题或自动化用例。",
+            "action": "查看来源原文，判断是否适合沉淀为任务、选题、线索或后续自动化动作。",
         }
         for keyword, count in top_keywords
     ]
@@ -462,12 +466,13 @@ def fallback_analysis(items: list[Item], config: dict[str, Any]) -> dict[str, An
         }
         for item in items[:10]
     ]
+    workflow_name = config["settings"].get("workflow_name", "自动化工作流")
     return {
-        "executive_summary": "本次报告使用本地规则完成摘要，因为还没有配置 ANTHROPIC_API_KEY。页面和抓取链路已经跑通，接入 Claude 后会自动生成更细的趋势判断、机会点和风险提醒。",
+        "executive_summary": f"本次报告使用本地规则完成摘要。{workflow_name} 已完成抓取、去重、评分和网页化生成；接入可用的 OpenAI 或 Anthropic 额度后，会自动升级为模型分析。",
         "trend_radar": trend_radar,
         "briefs": briefs,
-        "opportunities": ["把高频关键词沉淀成固定监控主题。", "将高分条目转成内容选题、产品灵感或竞品观察清单。"],
-        "watchlist": ["连续 2-3 次报告都出现的主题。", "GitHub 上近期高活跃但还没有形成主流讨论的项目。"],
+        "opportunities": ["把高频关键词沉淀成固定监控主题。", "将高分条目转成选题、产品灵感、竞品观察或待办线索。"],
+        "watchlist": ["连续 2-3 次报告都出现的主题。", "近期高活跃但还没有形成主流讨论的项目或产品。"],
         "risks": ["RSS/API 来源可能限流或返回噪声，需要持续维护关键词和来源白名单。"],
     }
 

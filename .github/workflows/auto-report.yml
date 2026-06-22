@@ -1,4 +1,4 @@
-name: AI Hotspot Radar Report
+name: Agent Skills Automation Report
 
 on:
   workflow_dispatch:
