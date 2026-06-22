@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" role="img" aria-label="AI Hotspot Radar">
+  <rect width="256" height="256" rx="48" fill="#0f8b8d"/>
+  <circle cx="128" cy="128" r="78" fill="none" stroke="#b9f4ef" stroke-width="10" opacity=".78"/>
+  <circle cx="128" cy="128" r="48" fill="none" stroke="#f6fbff" stroke-width="8" opacity=".9"/>
+  <path d="M128 128 192 86a76 76 0 0 1 12 42Z" fill="#ffffff" opacity=".92"/>
+  <circle cx="128" cy="128" r="20" fill="#ffffff"/>
+  <path d="M128 72v56l42 30" fill="none" stroke="#2d6cdf" stroke-width="13" stroke-linecap="round" stroke-linejoin="round"/>
+  <path d="M54 76h38M164 190h38" fill="none" stroke="#ffffff" stroke-width="13" stroke-linecap="round" opacity=".95"/>
+</svg>

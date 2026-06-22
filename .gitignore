@@ -1,0 +1,12 @@
+.env
+.env.local
+.venv/
+node_modules/
+__pycache__/
+*.pyc
+.DS_Store
+public/archive/
+public/data/
+public/index.html
+report-preview.png
+*.log

@@ -1,0 +1,381 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>{{ settings.report_title }}</title>
+  <style>
+    :root {
+      color-scheme: light;
+      --ink: #15202b;
+      --muted: #637083;
+      --line: #d9e0e7;
+      --surface: #ffffff;
+      --soft: #f5f8fb;
+      --teal: #0f8b8d;
+      --green: #2f8f46;
+      --amber: #b7791f;
+      --rose: #c2415d;
+      --blue: #2d6cdf;
+      --shadow: 0 10px 28px rgba(21, 32, 43, 0.08);
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      color: var(--ink);
+      background: var(--soft);
+      letter-spacing: 0;
+    }
+    a { color: inherit; text-decoration: none; }
+    .shell { max-width: 1240px; margin: 0 auto; padding: 24px; }
+    .topbar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      padding: 16px 0 22px;
+    }
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      min-width: 0;
+    }
+    .mark {
+      width: 44px;
+      height: 44px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: #eef8f8;
+      display: grid;
+      place-items: center;
+      flex: 0 0 auto;
+    }
+    .brand h1 { margin: 0; font-size: 24px; line-height: 1.15; }
+    .brand p { margin: 4px 0 0; color: var(--muted); font-size: 13px; }
+    .actions { display: flex; gap: 8px; flex-wrap: wrap; justify-content: flex-end; }
+    .button {
+      height: 36px;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      padding: 0 12px;
+      background: var(--surface);
+      color: var(--ink);
+      font-size: 13px;
+      box-shadow: 0 1px 0 rgba(21, 32, 43, 0.04);
+    }
+    .hero {
+      display: grid;
+      grid-template-columns: minmax(0, 1.45fr) minmax(300px, 0.55fr);
+      gap: 18px;
+      align-items: stretch;
+    }
+    .summary, .panel, .metric, .item {
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: var(--surface);
+      box-shadow: var(--shadow);
+    }
+    .summary { padding: 22px; min-height: 220px; }
+    .eyebrow {
+      display: inline-flex;
+      gap: 8px;
+      align-items: center;
+      color: var(--teal);
+      font-size: 12px;
+      font-weight: 700;
+      text-transform: uppercase;
+    }
+    .summary h2 { margin: 14px 0 10px; font-size: 32px; line-height: 1.12; }
+    .summary p { margin: 0; color: #38465a; line-height: 1.7; font-size: 15px; max-width: 840px; }
+    .metrics {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 10px;
+    }
+    .metric { padding: 16px; min-height: 105px; }
+    .metric span { display: block; color: var(--muted); font-size: 12px; }
+    .metric strong { display: block; margin-top: 10px; font-size: 26px; }
+    .metric small { display: block; margin-top: 8px; color: var(--muted); line-height: 1.45; }
+    .grid {
+      display: grid;
+      grid-template-columns: minmax(0, 0.9fr) minmax(0, 1.1fr);
+      gap: 18px;
+      margin-top: 18px;
+      align-items: start;
+    }
+    .topbar > *, .hero > *, .grid > *, .stack, .panel, .item, .trend { min-width: 0; }
+    .stack { display: grid; gap: 18px; }
+    .panel { padding: 18px; }
+    .panel h3 { margin: 0 0 14px; font-size: 16px; }
+    .radar { display: grid; gap: 12px; }
+    .trend {
+      display: grid;
+      grid-template-columns: 76px minmax(0, 1fr);
+      gap: 12px;
+      padding: 12px 0;
+      border-top: 1px solid var(--line);
+    }
+    .trend:first-child { border-top: 0; padding-top: 0; }
+    .signal {
+      height: 28px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 999px;
+      font-size: 12px;
+      font-weight: 700;
+      background: #edf7ef;
+      color: var(--green);
+    }
+    .signal.hot { background: #fff1f3; color: var(--rose); }
+    .signal.watch { background: #fff7e6; color: var(--amber); }
+    .trend b { display: block; margin-bottom: 4px; }
+    .trend p { margin: 0; color: var(--muted); line-height: 1.55; font-size: 13px; }
+    .bar-row {
+      display: grid;
+      grid-template-columns: minmax(120px, 0.42fr) minmax(120px, 1fr) 34px;
+      gap: 10px;
+      align-items: center;
+      margin: 10px 0;
+      font-size: 13px;
+      color: var(--muted);
+    }
+    .bar-track { height: 9px; border-radius: 999px; background: #e7edf3; overflow: hidden; }
+    .bar { height: 100%; border-radius: inherit; background: var(--teal); }
+    .bar.alt { background: var(--blue); }
+    .briefs { display: grid; gap: 12px; }
+    .item { padding: 16px; box-shadow: none; }
+    .item-head {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      gap: 12px;
+      margin-bottom: 10px;
+    }
+    .item h4 { margin: 0; font-size: 16px; line-height: 1.35; }
+    .item h4, .item p, .trend p, .status-table td { overflow-wrap: anywhere; }
+    .score {
+      flex: 0 0 auto;
+      min-width: 46px;
+      border-radius: 8px;
+      padding: 6px 8px;
+      background: #eef8f8;
+      color: var(--teal);
+      text-align: center;
+      font-weight: 800;
+      font-size: 13px;
+    }
+    .item p { margin: 8px 0 0; color: #445066; line-height: 1.62; font-size: 14px; }
+    .meta {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-top: 12px;
+      color: var(--muted);
+      font-size: 12px;
+    }
+    .chip {
+      border: 1px solid var(--line);
+      border-radius: 999px;
+      padding: 4px 8px;
+      background: #fafcff;
+    }
+    .list { margin: 0; padding: 0; list-style: none; display: grid; gap: 10px; }
+    .list li {
+      padding-left: 14px;
+      border-left: 3px solid var(--teal);
+      color: #445066;
+      line-height: 1.55;
+      font-size: 14px;
+    }
+    .status-table {
+      width: 100%;
+      border-collapse: collapse;
+      table-layout: fixed;
+      font-size: 13px;
+    }
+    .status-table th, .status-table td {
+      padding: 10px 8px;
+      border-top: 1px solid var(--line);
+      text-align: left;
+      vertical-align: top;
+    }
+    .status-table th { color: var(--muted); font-weight: 700; }
+    footer { color: var(--muted); font-size: 12px; margin: 22px 0 8px; text-align: center; }
+    @media (max-width: 900px) {
+      .shell { padding: 16px; }
+      .topbar, .hero, .grid { grid-template-columns: 1fr; display: grid; }
+      .actions { justify-content: flex-start; }
+      .summary h2 { font-size: 26px; }
+    }
+    @media (max-width: 560px) {
+      .metrics { grid-template-columns: 1fr; }
+      .trend { grid-template-columns: 1fr; }
+      .bar-row { grid-template-columns: 1fr 1fr 30px; }
+      .brand h1 { font-size: 20px; }
+    }
+  </style>
+</head>
+<body>
+  <main class="shell">
+    <header class="topbar">
+      <div class="brand">
+        <div class="mark" aria-hidden="true">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
+            <circle cx="12" cy="12" r="9" stroke="#0f8b8d" stroke-width="2"/>
+            <path d="M12 7v5l4 2" stroke="#2d6cdf" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+            <path d="M4 12h3M17 12h3" stroke="#0f8b8d" stroke-width="2" stroke-linecap="round"/>
+          </svg>
+        </div>
+        <div>
+          <h1>{{ settings.report_title }}</h1>
+          <p>{{ settings.report_subtitle }}</p>
+        </div>
+      </div>
+      <nav class="actions" aria-label="report actions">
+        <a class="button" href="data/latest.json">数据 JSON</a>
+        {% if archive_href %}<a class="button" href="{{ archive_href }}">本次归档</a>{% endif %}
+      </nav>
+    </header>
+
+    <section class="hero">
+      <div class="summary">
+        <span class="eyebrow">Automated Report · {{ generated_at }}</span>
+        <h2>本轮热点摘要</h2>
+        <p>{{ analysis.executive_summary }}</p>
+        <p>来源经过去重、关键词命中、发布时间和互动量加权排序；Claude Agent Skill 负责把候选信息收敛成趋势、机会、风险和可跟进动作。</p>
+      </div>
+      <div class="metrics">
+        <div class="metric"><span>候选条目</span><strong>{{ stats.total_items }}</strong><small>进入本轮排序池</small></div>
+        <div class="metric"><span>活跃来源</span><strong>{{ stats.active_sources }}</strong><small>成功返回内容的来源</small></div>
+        <div class="metric"><span>分析模式</span><strong>{{ stats.analysis_status.split(':')[0] }}</strong><small>{{ stats.analysis_status }}</small></div>
+        <div class="metric"><span>报告时间</span><strong>{{ generated_at[:10] }}</strong><small>{{ generated_at[11:] }}</small></div>
+      </div>
+    </section>
+
+    <section class="grid">
+      <div class="stack">
+        <div class="panel">
+          <h3>趋势雷达</h3>
+          <div class="radar">
+            {% for trend in analysis.trend_radar %}
+            <article class="trend">
+              <span class="signal {% if trend.signal == '爆发' %}hot{% elif trend.signal == '观察' %}watch{% endif %}">{{ trend.signal }}</span>
+              <div>
+                <b>{{ trend.name }}</b>
+                <p>{{ trend.why }}</p>
+                <p>{{ trend.action }}</p>
+              </div>
+            </article>
+            {% else %}
+            <p>本轮还没有足够信号形成趋势。</p>
+            {% endfor %}
+          </div>
+        </div>
+
+        <div class="panel">
+          <h3>来源分布</h3>
+          {% set max_source = (stats.source_counts[0][1] if stats.source_counts else 1) %}
+          {% for name, count in stats.source_counts %}
+          <div class="bar-row">
+            <span>{{ name }}</span>
+            <div class="bar-track"><div class="bar" style="width: {{ (count / max_source * 100) | round(0) }}%"></div></div>
+            <strong>{{ count }}</strong>
+          </div>
+          {% endfor %}
+        </div>
+
+        <div class="panel">
+          <h3>关键词热度</h3>
+          {% set max_keyword = (stats.keyword_counts[0][1] if stats.keyword_counts else 1) %}
+          {% for name, count in stats.keyword_counts %}
+          <div class="bar-row">
+            <span>{{ name }}</span>
+            <div class="bar-track"><div class="bar alt" style="width: {{ (count / max_keyword * 100) | round(0) }}%"></div></div>
+            <strong>{{ count }}</strong>
+          </div>
+          {% endfor %}
+        </div>
+
+        <div class="panel">
+          <h3>机会</h3>
+          <ul class="list">
+            {% for item in analysis.opportunities %}<li>{{ item }}</li>{% endfor %}
+          </ul>
+        </div>
+
+        <div class="panel">
+          <h3>风险与观察</h3>
+          <ul class="list">
+            {% for item in analysis.risks %}<li>{{ item }}</li>{% endfor %}
+            {% for item in analysis.watchlist %}<li>{{ item }}</li>{% endfor %}
+          </ul>
+        </div>
+      </div>
+
+      <div class="stack">
+        <div class="panel">
+          <h3>重点简报</h3>
+          <div class="briefs">
+            {% for brief in analysis.briefs %}
+            {% set matched = (items | selectattr("id", "equalto", brief.item_id) | list) %}
+            {% set source_item = matched[0] if matched else none %}
+            <article class="item">
+              <div class="item-head">
+                <h4>{% if source_item %}<a href="{{ source_item.url }}" target="_blank" rel="noreferrer">{{ brief.title }}</a>{% else %}{{ brief.title }}{% endif %}</h4>
+                {% if source_item %}<span class="score">{{ source_item.score }}</span>{% endif %}
+              </div>
+              <p>{{ brief.takeaway }}</p>
+              <p>{{ brief.why_it_matters }}</p>
+              <div class="meta">
+                {% if source_item %}<span class="chip">{{ source_item.source_name }}</span>{% endif %}
+                {% for tag in brief.tags %}<span class="chip">{{ tag }}</span>{% endfor %}
+              </div>
+            </article>
+            {% endfor %}
+          </div>
+        </div>
+
+        <div class="panel">
+          <h3>Top 条目</h3>
+          <div class="briefs">
+            {% for item in items[:12] %}
+            <article class="item">
+              <div class="item-head">
+                <h4><a href="{{ item.url }}" target="_blank" rel="noreferrer">{{ item.title }}</a></h4>
+                <span class="score">{{ item.score }}</span>
+              </div>
+              <p>{{ item.summary }}</p>
+              <div class="meta">
+                <span class="chip">{{ item.source_name }}</span>
+                {% if item.published_at %}<span class="chip">{{ item.published_at[:10] }}</span>{% endif %}
+                {% for keyword in item.keywords[:4] %}<span class="chip">{{ keyword }}</span>{% endfor %}
+              </div>
+            </article>
+            {% endfor %}
+          </div>
+        </div>
+
+        <div class="panel">
+          <h3>运行状态</h3>
+          <table class="status-table">
+            <thead><tr><th>来源</th><th>数量</th><th>状态</th></tr></thead>
+            <tbody>
+              {% for row in statuses %}
+              <tr><td>{{ row.source }}</td><td>{{ row.count }}</td><td>{{ row.status }}</td></tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <footer>Generated by GitHub Actions + Claude Agent Skill. Latest data: public/data/latest.json</footer>
+  </main>
+</body>
+</html>

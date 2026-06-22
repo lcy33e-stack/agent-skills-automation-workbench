@@ -1,0 +1,16 @@
+{
+  "name": "ai-hotspot-radar",
+  "version": "1.0.0",
+  "private": true,
+  "description": "AI hotspot report desktop app powered by GitHub Actions and OpenAI-compatible analysis.",
+  "main": "electron/main.cjs",
+  "scripts": {
+    "app": "electron .",
+    "desktop": "electron .",
+    "report": "python scripts/run_pipeline.py"
+  },
+  "devDependencies": {
+    "electron": "^42.4.1"
+  }
+}
+
