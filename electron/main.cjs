@@ -6,6 +6,8 @@ const path = require('node:path');
 const rootDir = path.resolve(__dirname, '..');
 const reportPath = path.join(rootDir, 'public', 'index.html');
 const dataPath = path.join(rootDir, 'public', 'data', 'latest.json');
+const configPath = path.join(rootDir, 'config', 'sources.yml');
+const promptDocPath = path.join(rootDir, '操作提示词文档.txt');
 const iconPath = path.join(rootDir, 'assets', 'app-icon.ico');
 
 let mainWindow;
@@ -101,9 +103,31 @@ ipcMain.handle('report-info', () => {
     analysisStatus
   };
 });
+ipcMain.handle('dashboard-data', () => {
+  if (!fs.existsSync(dataPath)) {
+    return null;
+  }
+  return JSON.parse(fs.readFileSync(dataPath, 'utf8'));
+});
+ipcMain.handle('save-keywords', (_event, keywords) => {
+  return new Promise((resolve) => {
+    const child = spawn('python', ['scripts/update_config.py', '--keywords', JSON.stringify(keywords)], {
+      cwd: rootDir,
+      windowsHide: true
+    });
+    let stderr = '';
+    child.stderr.on('data', (chunk) => {
+      stderr += chunk.toString();
+    });
+    child.on('close', (code) => {
+      resolve({ ok: code === 0, message: code === 0 ? '关键词已保存' : stderr.trim() || `保存失败，退出码 ${code}` });
+    });
+  });
+});
 ipcMain.handle('open-config', () => shell.openPath(path.join(rootDir, 'config', 'sources.yml')));
 ipcMain.handle('open-folder', () => shell.openPath(rootDir));
 ipcMain.handle('open-report-external', () => shell.openPath(reportPath));
+ipcMain.handle('open-prompt-doc', () => shell.openPath(promptDocPath));
 
 app.whenReady().then(createWindow);
 app.on('window-all-closed', () => {

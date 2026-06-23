@@ -7,42 +7,121 @@
   <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-  <div class="app-shell">
-    <aside class="sidebar">
+  <div class="workspace">
+    <aside class="brief-panel">
       <div class="brand">
         <img src="../assets/app-icon.svg" alt="" class="app-icon">
         <div>
+          <span>SOLO / Codex 交付态</span>
           <h1>Agent Skills 自动化工作台</h1>
-          <p>云端定时运行 · 本地查看结果</p>
         </div>
       </div>
 
-      <div class="status-block">
-        <span>最近运行</span>
-        <strong id="generatedAt">读取中...</strong>
-      </div>
+      <section class="task-card">
+        <h2>现在可以做什么</h2>
+        <ol>
+          <li>配置任意主题关键词和信息来源</li>
+          <li>本地一键运行 Agent Skill 分析</li>
+          <li>查看信号卡片、Top 条目和来源状态</li>
+          <li>云端 GitHub Actions 定时自动运行</li>
+          <li>GitHub Pages 自动展示最新结果</li>
+        </ol>
+      </section>
 
-      <div class="status-block">
-        <span>分析引擎</span>
-        <strong id="analysisStatus">读取中...</strong>
-      </div>
+      <section class="task-card">
+        <h2>完成清单</h2>
+        <ul class="check-list">
+          <li>桌面 App 和图标</li>
+          <li>关键词配置保存</li>
+          <li>运行结果仪表盘</li>
+          <li>标准操作提示词文档</li>
+          <li>GitHub 仓库和 Pages 部署</li>
+        </ul>
+      </section>
 
-      <nav class="actions">
-        <button id="refreshButton" class="primary" type="button">运行一次</button>
-        <button id="configButton" type="button">编辑任务来源</button>
-        <button id="externalButton" type="button">外部打开结果</button>
+      <section class="task-card summary">
+        <h2>产物总结</h2>
+        <p>这个项目已经从单一热点页升级为通用 Agent Skills 自动化工作台。你可以把它改造成竞品监控、论文日报、GitHub 项目观察、内容选题库或任意信息雷达。</p>
+      </section>
+
+      <div class="side-actions">
+        <button id="promptButton" type="button">操作提示文档</button>
         <button id="folderButton" type="button">项目文件夹</button>
-      </nav>
-
-      <p id="runStatus" class="run-status">就绪</p>
+      </div>
     </aside>
 
-    <main class="report-pane">
-      <iframe id="reportFrame" title="Skills 运行结果"></iframe>
-      <div id="emptyState" class="empty-state">
-        <h2>还没有运行结果</h2>
-        <p>点击左侧“运行一次”，应用会按配置抓取来源、执行分析并生成本地报告。</p>
-      </div>
+    <main class="app-panel">
+      <header class="hero-card">
+        <div>
+          <span class="eyebrow">GitHub Actions + Agent Skills</span>
+          <h2 id="workflowName">读取中...</h2>
+          <p id="workflowGoal">正在读取任务目标。</p>
+        </div>
+        <div class="hero-actions">
+          <button id="refreshButton" class="primary" type="button">运行一次</button>
+          <button id="externalButton" type="button">打开网页结果</button>
+        </div>
+      </header>
+
+      <section class="control-card">
+        <div class="control-head">
+          <div>
+            <h3>关键词设置</h3>
+            <p>修改后会写入配置文件，下一次运行按新主题抓取和分析。</p>
+          </div>
+          <button id="configButton" type="button">编辑完整配置</button>
+        </div>
+        <div class="keyword-row">
+          <input id="keywordInput" type="text" placeholder="例如：AI, Agent, 自动化, GitHub Actions">
+          <button id="saveKeywordsButton" type="button">保存关键词</button>
+        </div>
+        <div id="keywordChips" class="chips"></div>
+      </section>
+
+      <section class="stats-row">
+        <article>
+          <span>候选条目</span>
+          <strong id="totalItems">-</strong>
+        </article>
+        <article>
+          <span>活跃来源</span>
+          <strong id="activeSources">-</strong>
+        </article>
+        <article>
+          <span>最近运行</span>
+          <strong id="generatedAt">-</strong>
+        </article>
+        <article>
+          <span>分析引擎</span>
+          <strong id="analysisStatus">-</strong>
+        </article>
+      </section>
+
+      <section class="content-grid">
+        <div class="card">
+          <div class="section-title">
+            <h3>信号雷达</h3>
+            <span id="runStatus">就绪</span>
+          </div>
+          <div id="signalGrid" class="signal-grid"></div>
+        </div>
+
+        <div class="card">
+          <div class="section-title">
+            <h3>来源状态</h3>
+            <span>自动抓取</span>
+          </div>
+          <div id="sourceList" class="source-list"></div>
+        </div>
+
+        <div class="card wide">
+          <div class="section-title">
+            <h3>Top 条目</h3>
+            <span>可点击打开原文</span>
+          </div>
+          <div id="itemList" class="item-list"></div>
+        </div>
+      </section>
     </main>
   </div>
 
