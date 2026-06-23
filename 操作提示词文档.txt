@@ -3,8 +3,8 @@
 ============================================================
 
 文档版本：v1.0
-项目位置：C:\Users\96191\Desktop\claude-skills-hotspot-report
-运行方式：桌面快捷方式「Agent Skills自动化工作台」
+项目位置：C:\Users\96191\Desktop\agent-skills-automation-workbench
+运行方式：桌面快捷方式「Agent Skills 自动化工作台」
 云端地址：https://lcy33e-stack.github.io/agent-skills-automation-workbench/
 
 ============================================================
@@ -87,7 +87,7 @@ sources：信息来源列表
 
 双击桌面快捷方式：
 
-Agent Skills自动化工作台
+Agent Skills 自动化工作台
 
 或者在项目目录执行：
 
@@ -156,4 +156,3 @@ A：n8n 是节点编排界面；这个项目把节点思想转换成代码配置
 3. 保留桌面 App 操作体验
 4. 运行 python scripts/run_pipeline.py 验证
 5. 提交并推送到 GitHub
-

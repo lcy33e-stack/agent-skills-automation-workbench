@@ -28,7 +28,7 @@ npm install
 npm run app
 ```
 
-或者双击桌面的 `Agent Skills自动化工作台` / `AI热点雷达 App` 快捷方式。
+或者双击桌面的 `Agent Skills 自动化工作台` 快捷方式。
 
 ## 配置任务
 

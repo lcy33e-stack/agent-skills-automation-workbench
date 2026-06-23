@@ -137,7 +137,7 @@ def fetch_github_search(source: dict[str, Any], max_items: int) -> tuple[list[It
     headers = {
         "Accept": "application/vnd.github+json",
         "X-GitHub-Api-Version": "2022-11-28",
-        "User-Agent": "claude-skills-hotspot-report",
+        "User-Agent": "agent-skills-automation-workbench",
     }
     token = os.getenv("GITHUB_TOKEN")
     if token:
@@ -196,7 +196,7 @@ def fetch_twitterapi_search(source: dict[str, Any], max_items: int) -> tuple[lis
 
     payload = request_json(
         source["url"],
-        headers={"X-API-Key": api_key, "User-Agent": "claude-skills-hotspot-report"},
+        headers={"X-API-Key": api_key, "User-Agent": "agent-skills-automation-workbench"},
         params={"query": source.get("query", "AI"), "queryType": source.get("query_type", "Top")},
     )
     tweets = flatten_tweets(payload)[:max_items]
@@ -496,6 +496,8 @@ def build_stats(items: list[Item], statuses: list[dict[str, Any]], analysis_stat
 
 def copy_latest_archive(index_path: Path, generated_at: datetime) -> str:
     ARCHIVE_DIR.mkdir(parents=True, exist_ok=True)
+    for old_report in ARCHIVE_DIR.glob("report-*.html"):
+        old_report.unlink()
     archive_name = f"report-{generated_at.strftime('%Y%m%d-%H%M%S')}.html"
     archive_path = ARCHIVE_DIR / archive_name
     shutil.copyfile(index_path, archive_path)
